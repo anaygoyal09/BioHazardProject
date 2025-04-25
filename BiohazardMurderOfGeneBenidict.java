@@ -42,298 +42,318 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import java.awt.Dimension;
+
 
 public class BiohazardMurderOfGeneBenidict
 {
-  public static void main(String[] args)
-  {
-    BiohazardMurderOfGeneBenidict bmogb = new BiohazardMurderOfGeneBenidict();
-    bmogb.createFrame();
-  }
+	public static void main(String[] args)
+	{
+		BiohazardMurderOfGeneBenidict bmogb = new BiohazardMurderOfGeneBenidict();
+		bmogb.createFrame();
+	}
 
-  public void createFrame()
-  {
-    JFrame frame = new JFrame("Biohazard: The Murder of Gene Benidict");
-    frame.setSize(1000, 800);				
-    frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
-    frame.setResizable(false);
-    frame.setLocationRelativeTo(null);
-    BiohazardMurderOfGeneBenidictHolder bmogbh = new BiohazardMurderOfGeneBenidictHolder();
-    frame.getContentPane().add(bmogbh);
-    frame.setVisible(true);
-  }
+	public void createFrame()
+	{
+		JFrame frame = new JFrame("Biohazard: The Murder of Gene Benidict");
+		frame.setSize(1000, 800);				
+		frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
+		frame.setResizable(false);
+		frame.setLocationRelativeTo(null);
+		BiohazardMurderOfGeneBenidictHolder bmogbh = new BiohazardMurderOfGeneBenidictHolder();
+		frame.getContentPane().add(bmogbh);
+		frame.setVisible(true);
+	}
 }
 
 class BiohazardMurderOfGeneBenidictHolder extends JPanel
 {
-  public BiohazardMurderOfGeneBenidictHolder()
-  {
-    setBackground(Color.BLACK);
-    CardLayout cards = new CardLayout();
-    setLayout(cards);
+	public BiohazardMurderOfGeneBenidictHolder()
+	{
+		setBackground(Color.BLACK);
+		CardLayout cards = new CardLayout();
+		setLayout(cards);
 
-    firstCard title = new firstCard(this, cards);
-    secondCard report = new secondCard(this, cards);
+		firstCard title = new firstCard(this, cards);
+		secondCard report = new secondCard(this, cards);
 
-    add(title, "title");
-    add(report, "report");
-  }
+		add(title, "title");
+		add(report, "report");
+	}
 
-  class firstCard extends JPanel implements MouseListener, MouseMotionListener
-  {
-    Image policeLights, titleImage, startButton;
-    Timer black, showTitle, fadeTimer, checkTime, hoverTimer;
-    boolean changeBlack, showImage, startReady, entered, hoveringStart, clickingStart;
-    float titleTransparency, startTransparency;
-    int startX, startY, startW, startH, targetW, targetH;
-    BiohazardMurderOfGeneBenidictHolder panelCards;
-    CardLayout cards;
+	class firstCard extends JPanel implements MouseListener, MouseMotionListener
+	{
+		Image policeLights, titleImage, startButton;
+		Timer black, showTitle, fadeTimer, checkTime, hoverTimer;
+		boolean changeBlack, showImage, startReady, entered, hoveringStart, clickingStart;
+		float titleTransparency, startTransparency;
+		int startX, startY, startW, startH, targetW, targetH;
+		BiohazardMurderOfGeneBenidictHolder panelCards;
+		CardLayout cards;
 
-    public firstCard(BiohazardMurderOfGeneBenidictHolder panelCardsIn, CardLayout cardsIn)
-    {
-      addMouseListener(this);
-      addMouseMotionListener(this);
-      panelCards = panelCardsIn;
-      cards = cardsIn;
-      hoveringStart = clickingStart = false;
-      startX = 375;
-      startY = 660;
-      startW = 250;
-      startH = 75;
-      targetW = 250;
-      targetH = 75;
-      startHoverAnimation();
-      getImage();
-      ImageIcon storeGif = new ImageIcon("src/policeLightsAni.gif");        
-      policeLights = storeGif.getImage();
-      blackScreen();
-    }
+		public firstCard(BiohazardMurderOfGeneBenidictHolder panelCardsIn, CardLayout cardsIn)
+		{
+			addMouseListener(this);
+			addMouseMotionListener(this);
+			panelCards = panelCardsIn;
+			cards = cardsIn;
+			hoveringStart = clickingStart = false;
+			startX = 375;
+			startY = 660;
+			startW = 250;
+			startH = 75;
+			targetW = 250;
+			targetH = 75;
+			startHoverAnimation();
+			getImage();
+			ImageIcon storeGif = new ImageIcon("policeLightsAni.gif");        
+			policeLights = storeGif.getImage();
+			blackScreen();
+		}
 
-    public void blackScreen()
-    {
-      timerBlackHandler tbh = new timerBlackHandler();
-      showTitleTimerHandler stth = new showTitleTimerHandler();
-      checkTimeTimerHandler ctth = new checkTimeTimerHandler();
-      changeBlack = showImage = startReady = entered = false;
-      titleTransparency = startTransparency = 0f;
-      black = new Timer(3500, tbh);
-      showTitle = new Timer(2000, stth);
-      checkTime = new Timer(3000, ctth);
-      black.start();
-    }
+		public void blackScreen()
+		{
+			timerBlackHandler tbh = new timerBlackHandler();
+			showTitleTimerHandler stth = new showTitleTimerHandler();
+			checkTimeTimerHandler ctth = new checkTimeTimerHandler();
+			changeBlack = showImage = startReady = entered = false;
+			titleTransparency = startTransparency = 0f;
+			black = new Timer(3500, tbh);
+			showTitle = new Timer(2000, stth);
+			checkTime = new Timer(3000, ctth);
+			black.start();
+		}
 
-    public void getImage()
-    {
-      try
-      {
-        titleImage = ImageIO.read(new File("src/titlePicture.jpg"));
-        startButton = ImageIO.read(new File("src/start.jpg"));
-      }
+		public void getImage()
+		{
+			try
+			{
+				titleImage = ImageIO.read(new File("titlePicture.jpg"));
+				startButton = ImageIO.read(new File("start.jpg"));
+			}
 
-      catch(IOException e)
-      {
-        System.err.println("\n\n\nERROR IN RETREIVING IMAGE\n\n\n");
-        e.printStackTrace();
-      }
-    }
+			catch(IOException e)
+			{
+				System.err.println("\n\n\nERROR IN RETREIVING IMAGE\n\n\n");
+				e.printStackTrace();
+			}
+		}
 
-    public void startHoverAnimation()
-    {
-      hoverTimerHandler hth = new hoverTimerHandler();
-      hoverTimer = new Timer(30, hth);
-      hoverTimer.start();
-    }
+		public void startHoverAnimation()
+		{
+			hoverTimerHandler hth = new hoverTimerHandler();
+			hoverTimer = new Timer(30, hth);
+			hoverTimer.start();
+		}
 
-    class hoverTimerHandler implements ActionListener
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        if(hoveringStart && (!clickingStart))
-        {
-          if(targetW < 275)
-            targetW += 2;
+		class hoverTimerHandler implements ActionListener
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				if(hoveringStart && (!clickingStart))
+				{
+					if(targetW < 275)
+						targetW += 2;
 
-          if(targetH < 85)
-            targetH += 1;
-        }
+					if(targetH < 85)
+						targetH += 1;
+				}
 
-        else if((!hoveringStart) && (!clickingStart))
-        {
-          if(targetW > 250)
-            targetW -= 2;
+				else if((!hoveringStart) && (!clickingStart))
+				{
+					if(targetW > 250)
+						targetW -= 2;
 
-          if(targetH > 75)
-            targetH -= 1;
-        }
+					if(targetH > 75)
+						targetH -= 1;
+				}
 
-        else if(clickingStart)
-        {
-          targetW = 240;
-          targetH = 70;
-        }
-        repaint();
-      }
-    }
+				else if(clickingStart)
+				{
+					targetW = 240;
+					targetH = 70;
+				}
+				repaint();
+			}
+		}
 
-    class checkTimeTimerHandler implements ActionListener
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        startReady = true;
-        titleTransparency = 0f;
-        fadeTimer.restart();
-        startFadeIn();
-        repaint();
-      }
-    }
+		class checkTimeTimerHandler implements ActionListener
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				startReady = true;
+				titleTransparency = 0f;
+				fadeTimer.restart();
+				startFadeIn();
+				repaint();
+			}
+		}
 
-    class timerBlackHandler implements ActionListener
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        changeBlack = true;
-        repaint();
-        black.stop();
-        showTitle.start();
-      }
-    }
+		class timerBlackHandler implements ActionListener
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				changeBlack = true;
+				repaint();
+				black.stop();
+				showTitle.start();
+			}
+		}
 
-    class showTitleTimerHandler implements ActionListener
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        showImage = true;
-        repaint();
-        showTitle.stop();
-        startFadeIn();
-      }
-    }
+		class showTitleTimerHandler implements ActionListener
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				showImage = true;
+				repaint();
+				showTitle.stop();
+				startFadeIn();
+			}
+		}
 
-    class fadeTimerHandler implements ActionListener
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        if(!startReady)
-        {
-          titleTransparency += 0.05f;
-          if(titleTransparency >= 1f)
-          {
-            titleTransparency = 1f;
-            fadeTimer.stop();
-            startReady = true;
-            startFadeIn();
-          }
-        } 
+		class fadeTimerHandler implements ActionListener
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				if(!startReady)
+				{
+					titleTransparency += 0.05f;
+					if(titleTransparency >= 1f)
+					{
+						titleTransparency = 1f;
+						fadeTimer.stop();
+						startReady = true;
+						startFadeIn();
+					}
+				} 
 
-        else
-        {
-          startTransparency += 0.05f;
+				else
+				{
+					startTransparency += 0.05f;
 
-          if(startTransparency >= 1f)
-          {
-            startTransparency = 1f;
-            fadeTimer.stop();
-          }
-        }
-        repaint();
-      }
-    }
+					if(startTransparency >= 1f)
+					{
+						startTransparency = 1f;
+						fadeTimer.stop();
+					}
+				}
+				repaint();
+			}
+		}
 
-    public void startFadeIn()
-    {
-      fadeTimerHandler fth = new fadeTimerHandler();
-      fadeTimer = new Timer(150, fth);
-      fadeTimer.start();
-    }
+		public void startFadeIn()
+		{
+			fadeTimerHandler fth = new fadeTimerHandler();
+			fadeTimer = new Timer(150, fth);
+			fadeTimer.start();
+		}
 
-    public void paintComponent(Graphics g)
-    {
-      super.paintComponent(g);
-      g.setColor(Color.BLACK);
-      g.drawImage(policeLights, -100, 0, 1300, 875, this);
+		public void paintComponent(Graphics g)
+		{
+			super.paintComponent(g);
+			g.setColor(Color.BLACK);
+			g.drawImage(policeLights, -100, 0, 1300, 875, this);
 
-      if(changeBlack)
-        g.fillRect(0, 0, 1000, 800);
+			if(changeBlack)
+				g.fillRect(0, 0, 1000, 800);
 
-      if(showImage && changeBlack)
-      {
-        Graphics2D g2d = (Graphics2D)(g);
+			if(showImage && changeBlack)
+			{
+				Graphics2D g2d = (Graphics2D)(g);
 
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, titleTransparency));
-        g2d.drawImage(titleImage, 100, 40, 800, 600, this);
+				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, titleTransparency));
+				g2d.drawImage(titleImage, 100, 40, 800, 600, this);
 
-        if(startReady)
-        {
-          int drawX = startX - ((targetW - startW) / 2);
-          int drawY = startY - ((targetH - startH) / 2);
+				if(startReady)
+				{
+					int drawX = startX - ((targetW - startW) / 2);
+					int drawY = startY - ((targetH - startH) / 2);
 
-          g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, startTransparency));
-          g2d.drawImage(startButton, drawX, drawY, targetW, targetH, this);
+					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, startTransparency));
+					g2d.drawImage(startButton, drawX, drawY, targetW, targetH, this);
 
-          if(clickingStart)
-          {
-            g2d.setColor(new Color(0, 0, 0, 80));
-            g2d.fillRect(drawX, drawY, targetW, targetH);
-          }
-        }
-      }
-    }
+					if(clickingStart)
+					{
+						g2d.setColor(new Color(0, 0, 0, 80));
+						g2d.fillRect(drawX, drawY, targetW, targetH);
+					}
+				}
+			}
+		}
 
-    public void mouseMoved(MouseEvent e)
-    {
-      int x = e.getX();
-      int y = e.getY();
+		public void mouseMoved(MouseEvent e)
+		{
+			int x = e.getX();
+			int y = e.getY();
 
-      if(x >= startX && x <= (startX + targetW) && y >= startY && y <= (startY + targetH))
-        hoveringStart = true;
+			if(x >= startX && x <= (startX + targetW) && y >= startY && y <= (startY + targetH))
+				hoveringStart = true;
 
-      else
-        hoveringStart = false;
-    }
+			else
+				hoveringStart = false;
+		}
 
-    public void mousePressed(MouseEvent e)
-    {
-      int x = e.getX();
-      int y = e.getY();
+		public void mousePressed(MouseEvent e)
+		{
+			int x = e.getX();
+			int y = e.getY();
 
-      if(x >= startX && x <= (startX + targetW) && y >= startY && y <= (startY + targetH))
-      {
-        clickingStart = true;
-        repaint();
-      }
-    }
+			if(x >= startX && x <= (startX + targetW) && y >= startY && y <= (startY + targetH))
+			{
+				clickingStart = true;
+				repaint();
+			}
+		}
 
-    public void mouseReleased(MouseEvent e)
-    {
-      clickingStart = false;
-      repaint();
-    }
+		public void mouseReleased(MouseEvent e)
+		{
+			clickingStart = false;
+			repaint();
+		}
 
-    public void mouseClicked(MouseEvent e)
-    {
-      int x = e.getX();
-      int y = e.getY();
+		public void mouseClicked(MouseEvent e)
+		{
+			int x = e.getX();
+			int y = e.getY();
 
-      if(x >= startX && x <= (startX + targetW) && y >= startY && y <= (startY + targetH))
-        cards.show(panelCards, "report");
-    }
+			if(x >= startX && x <= (startX + targetW) && y >= startY && y <= (startY + targetH))
+				cards.show(panelCards, "report");
+		}
 
-    public void mouseEntered(MouseEvent e) {}
-    public void mouseExited(MouseEvent e) {}
-    public void mouseDragged(MouseEvent e) {}
-  }
+		public void mouseEntered(MouseEvent e) {}
+		public void mouseExited(MouseEvent e) {}
+		public void mouseDragged(MouseEvent e) {}
+	}
 
-  class secondCard extends JPanel
-  {
-    BiohazardMurderOfGeneBenidictHolder panelCards;
-    CardLayout cards;
+	class secondCard extends JPanel
+	{
+		BiohazardMurderOfGeneBenidictHolder panelCards;
+		CardLayout cards;
 
-    public secondCard(BiohazardMurderOfGeneBenidictHolder panelCardsIn, CardLayout cardsIn)
-    {
-      panelCards = panelCardsIn;
-      cards = cardsIn;
-    }
-  }
+		public secondCard(BiohazardMurderOfGeneBenidictHolder panelCardsIn, CardLayout cardsIn)
+		{
+			panelCards = panelCardsIn;
+			cards = cardsIn;
+
+			ImageIcon imageIcon = new ImageIcon("longImage.jpg");
+			JLabel imageLabel = new JLabel(imageIcon);
+
+			// Wrap it in a scroll pane
+			JScrollPane scrollPane = new JScrollPane(imageLabel);
+			scrollPane.setPreferredSize(new Dimension(800, 600));
+
+			setLayout(new BorderLayout());
+			add(scrollPane, BorderLayout.CENTER);
+
+		}
+
+	}
 }
+
 
 
