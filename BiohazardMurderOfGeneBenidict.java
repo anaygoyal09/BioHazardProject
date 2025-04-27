@@ -1,10 +1,12 @@
-//Arsh Abhinkar & Anay Goyal
+//Code link: https://github.com/anaygoyal09/BioHazardProject
+//Arsh Abhinkar, Anay Goyal
 //BiohazardMurderOfGeneBenidict.java
 //4/12/25
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Dimension;
 import java.awt.Image;
@@ -21,6 +23,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JRadioButton;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JTextField;
@@ -42,13 +46,6 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
-import java.awt.Dimension;
-
 
 public class BiohazardMurderOfGeneBenidict
 {
@@ -95,6 +92,15 @@ class BiohazardMurderOfGeneBenidictHolder extends JPanel
 		int startX, startY, startW, startH, targetW, targetH;
 		BiohazardMurderOfGeneBenidictHolder panelCards;
 		CardLayout cards;
+		double scale = 1.0;
+		boolean pulseOut;
+		double minScale = 0.95;
+		double maxScale = 1.05;
+		double hoverScale = 1.1;
+		double clickScale = 0.9;
+		double breathingSpeed = 0.003;
+		double snapSpeed = 0.02;
+
 
 		public firstCard(BiohazardMurderOfGeneBenidictHolder panelCardsIn, CardLayout cardsIn)
 		{
@@ -102,7 +108,7 @@ class BiohazardMurderOfGeneBenidictHolder extends JPanel
 			addMouseMotionListener(this);
 			panelCards = panelCardsIn;
 			cards = cardsIn;
-			hoveringStart = clickingStart = false;
+			hoveringStart = clickingStart = pulseOut = false;
 			startX = 375;
 			startY = 660;
 			startW = 250;
@@ -110,7 +116,7 @@ class BiohazardMurderOfGeneBenidictHolder extends JPanel
 			targetW = 250;
 			targetH = 75;
 			startHoverAnimation();
-			getImage();
+			retrieveImage();
 			ImageIcon storeGif = new ImageIcon("policeLightsAni.gif");        
 			policeLights = storeGif.getImage();
 			blackScreen();
@@ -129,7 +135,7 @@ class BiohazardMurderOfGeneBenidictHolder extends JPanel
 			black.start();
 		}
 
-		public void getImage()
+		public void retrieveImage()
 		{
 			try
 			{
@@ -153,33 +159,53 @@ class BiohazardMurderOfGeneBenidictHolder extends JPanel
 
 		class hoverTimerHandler implements ActionListener
 		{
-			public void actionPerformed(ActionEvent e)
-			{
-				if(hoveringStart && (!clickingStart))
-				{
-					if(targetW < 275)
-						targetW += 2;
+		    public void actionPerformed(ActionEvent e)
+		    {
+		        double tolerance = 0.005;
 
-					if(targetH < 85)
-						targetH += 1;
-				}
+		        if(!hoveringStart && !clickingStart)
+		        {
+		            if(pulseOut)
+		            {
+		                scale += breathingSpeed;
+		                
+		                if(scale >= maxScale)
+		                
+		                	pulseOut = false;
+		            }
+		            
+		            else
+		            {
+		                scale -= breathingSpeed;
+		                
+		                if(scale <= minScale)
+		                	pulseOut = true;
+		            }
+		        }
 
-				else if((!hoveringStart) && (!clickingStart))
-				{
-					if(targetW > 250)
-						targetW -= 2;
+		        else if(hoveringStart && !clickingStart)
+		        {
+		            if(Math.abs(scale - hoverScale) > tolerance)
+		                scale += (hoverScale - scale) * 0.1;
 
-					if(targetH > 75)
-						targetH -= 1;
-				}
+		            else
+		                scale = hoverScale;
+		        }
 
-				else if(clickingStart)
-				{
-					targetW = 240;
-					targetH = 70;
-				}
-				repaint();
-			}
+		        else if (clickingStart)
+		        {
+		            if(Math.abs(scale - clickScale) > tolerance)
+		                scale += (clickScale - scale) * 0.1;
+		            
+		            else
+		                scale = clickScale;
+		        }
+
+		        targetW = (int)(startW * scale);
+		        targetH = (int)(startH * scale);
+
+		        repaint();
+		    }
 		}
 
 		class checkTimeTimerHandler implements ActionListener
@@ -223,6 +249,7 @@ class BiohazardMurderOfGeneBenidictHolder extends JPanel
 				if(!startReady)
 				{
 					titleTransparency += 0.05f;
+					
 					if(titleTransparency >= 1f)
 					{
 						titleTransparency = 1f;
@@ -324,33 +351,70 @@ class BiohazardMurderOfGeneBenidictHolder extends JPanel
 			if(x >= startX && x <= (startX + targetW) && y >= startY && y <= (startY + targetH))
 				cards.show(panelCards, "report");
 		}
-
+		
 		public void mouseEntered(MouseEvent e) {}
 		public void mouseExited(MouseEvent e) {}
 		public void mouseDragged(MouseEvent e) {}
 	}
 
-	class secondCard extends JPanel
-	{
-		BiohazardMurderOfGeneBenidictHolder panelCards;
-		CardLayout cards;
+	public class secondCard extends JPanel {
+	    BiohazardMurderOfGeneBenidictHolder panelCards;
+	    CardLayout cards;
+	    private JButton startButton;
 
-		public secondCard(BiohazardMurderOfGeneBenidictHolder panelCardsIn, CardLayout cardsIn)
-		{
-			panelCards = panelCardsIn;
-			cards = cardsIn;
+	    public secondCard(BiohazardMurderOfGeneBenidictHolder panelCardsIn, CardLayout cardsIn) {
+	        panelCards = panelCardsIn;
+	        cards = cardsIn;
 
-			ImageIcon imageIcon = new ImageIcon("longImage.jpg");
-			JLabel imageLabel = new JLabel(imageIcon);
+	        // Main vertical panel for image and button
+	        JPanel contentPanel = new JPanel();
+	        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+	        contentPanel.setBackground(Color.WHITE);
 
-			// Wrap it in a scroll pane
-			JScrollPane scrollPane = new JScrollPane(imageLabel);
-			scrollPane.setPreferredSize(new Dimension(800, 600));
+	        // Load and scale the long image
+	        ImageIcon imageIcon = new ImageIcon("longImage.jpg");
+	        Image originalImage = imageIcon.getImage();
+	        Image scaledImage = originalImage.getScaledInstance(800, 1000, Image.SCALE_SMOOTH); // <-- Adjust size here
+	        ImageIcon scaledIcon = new ImageIcon(scaledImage);
 
-			setLayout(new BorderLayout());
-			add(scrollPane, BorderLayout.CENTER);
+	        JLabel imageLabel = new JLabel(scaledIcon);
 
-		}
+	        // Wrapper to center image
+	        JPanel imageWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	        imageWrapper.setBackground(Color.WHITE);
+	        imageWrapper.add(imageLabel);
 
+	        contentPanel.add(imageWrapper);
+
+	        // Scale start.jpg image
+	        ImageIcon originalIcon = new ImageIcon("start.jpg");
+	        Image startOriginalImage = originalIcon.getImage();
+	        Image startScaledImage = startOriginalImage.getScaledInstance(120, 50, Image.SCALE_SMOOTH);
+	        ImageIcon startScaledIcon = new ImageIcon(startScaledImage);
+
+	        // Start button
+	        startButton = new JButton(startScaledIcon);
+	        startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+	        startButton.setBorderPainted(false);
+	        startButton.setContentAreaFilled(false);
+	        startButton.setFocusPainted(false);
+
+	        startButton.addActionListener(new ActionListener() {
+	            public void actionPerformed(ActionEvent e) {
+	                cards.show(panelCards, "third"); // Replace with your actual next card name
+	            }
+	        });
+
+	        contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+	        contentPanel.add(startButton);
+	        contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+	        JScrollPane scrollPane = new JScrollPane(contentPanel);
+	        scrollPane.setPreferredSize(new Dimension(800, 600));
+
+	        setLayout(new BorderLayout());
+	        add(scrollPane, BorderLayout.CENTER);
+	    }
 	}
 }
+
